@@ -30,6 +30,13 @@ interface Schedule {
 }
 
 export default function AdminDashboard() {
+  // Login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  
   const [videos, setVideos] = useState<Video[]>([]);
   const [slides, setSlides] = useState<Slide[]>([]);
   const [schedule, setSchedule] = useState<Schedule[]>([]);
@@ -51,6 +58,36 @@ export default function AdminDashboard() {
   
   const slideFileRef = useRef<HTMLInputElement>(null);
   const thumbnailFileRef = useRef<HTMLInputElement>(null);
+
+  // Check auth on mount
+  useEffect(() => {
+    const auth = localStorage.getItem('oracletv_admin_auth');
+    if (auth === 'authenticated') {
+      setIsLoggedIn(true);
+    }
+    setIsCheckingAuth(false);
+  }, []);
+
+  // Handle login
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    
+    if (loginEmail === 'admin@oracletv.com' && loginPassword === 'OracleTV2024!') {
+      localStorage.setItem('oracletv_admin_auth', 'authenticated');
+      setIsLoggedIn(true);
+    } else {
+      setLoginError('Invalid email or password');
+    }
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('oracletv_admin_auth');
+    setIsLoggedIn(false);
+    setLoginEmail('');
+    setLoginPassword('');
+  };
 
   // Upload image function
   const uploadImage = async (file: File, type: 'slide' | 'thumbnail' = 'slide'): Promise<string | null> => {
@@ -192,6 +229,67 @@ export default function AdminDashboard() {
     setSchedule(schedule.filter(s => s.id !== id));
   };
 
+  // Show loading while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show login form if not authenticated
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold"><span className="text-blue-500">OTV</span> Admin</h1>
+            <p className="text-white/50 mt-2">Creator Studio Login</p>
+          </div>
+          <form onSubmit={handleLogin} className="bg-white/5 rounded-xl p-6 border border-white/10 space-y-4">
+            {loginError && (
+              <div className="bg-red-500/20 text-red-400 px-4 py-3 rounded-lg text-sm">
+                {loginError}
+              </div>
+            )}
+            <div>
+              <label className="block text-sm text-white/70 mb-2">Email</label>
+              <input 
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="admin@oracletv.com"
+                className="w-full p-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/50 focus:border-blue-500 focus:outline-none"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-white/70 mb-2">Password</label>
+              <input 
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="Enter password"
+                className="w-full p-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/50 focus:border-blue-500 focus:outline-none"
+                required
+              />
+            </div>
+            <button 
+              type="submit"
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition-colors"
+            >
+              Login
+            </button>
+          </form>
+          <Link href="/" className="block text-center mt-6 text-white/50 hover:text-white text-sm">
+            ← Back to Site
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Header */}
@@ -205,7 +303,10 @@ export default function AdminDashboard() {
             <div className="w-px h-6 bg-white/20" />
             <h1 className="text-xl font-bold"><span className="text-blue-500">OTV</span> Creator Studio</h1>
           </div>
-          <Link href="/" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-semibold">View Site</Link>
+          <div className="flex items-center gap-3">
+            <Link href="/" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-semibold">View Site</Link>
+            <button onClick={handleLogout} className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold">Logout</button>
+          </div>
         </div>
       </header>
 
