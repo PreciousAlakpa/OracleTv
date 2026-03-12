@@ -174,3 +174,4 @@ This project is open source and available under the [MIT License](LICENSE).
 - [Tailwind CSS](https://tailwindcss.com/)
 - [shadcn/ui](https://ui.shadcn.com/)
 - [Lucide Icons](https://lucide.dev/)
+
