@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       console.error('Missing Supabase environment variables');
       return NextResponse.json({ 
         error: 'Server configuration error',
-        details: 'Supabase credentials not configured. Please add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to Vercel environment variables.'
+        details: 'Supabase credentials not configured.'
       }, { status: 500 });
     }
 
@@ -22,11 +22,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({ 
         error: 'File too large',
-        details: 'Maximum file size is 5MB'
+        details: 'Maximum file size is 10MB'
       }, { status: 400 });
     }
 
@@ -40,7 +40,13 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    console.log('Uploading to bucket: oracletv-media, file:', fileName);
+    console.log('Uploading to bucket: oracletv-media, file:', fileName, 'size:', file.size);
+
+    // Determine content type
+    let contentType = file.type || 'image/jpeg';
+    if (!contentType.startsWith('image/')) {
+      contentType = 'image/jpeg';
+    }
 
     // Upload to Supabase Storage
     const response = await fetch(
@@ -49,7 +55,7 @@ export async function POST(request: NextRequest) {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'Content-Type': file.type || 'image/jpeg',
+          'Content-Type': contentType,
           'x-upsert': 'true',
         },
         body: buffer,
@@ -60,30 +66,16 @@ export async function POST(request: NextRequest) {
       const errorText = await response.text();
       console.error('Supabase upload error:', response.status, errorText);
       
-      // Check for specific errors
-      if (response.status === 404) {
-        return NextResponse.json({ 
-          error: 'Storage bucket not found',
-          details: 'The "oracletv-media" bucket does not exist. Please create it in Supabase Dashboard > Storage.'
-        }, { status: 500 });
-      }
-      
-      if (response.status === 403) {
-        return NextResponse.json({ 
-          error: 'Permission denied',
-          details: 'Storage policies not configured. Please add public policies for the oracletv-media bucket in Supabase.'
-        }, { status: 500 });
-      }
-      
-      // Fallback: Return a data URL for small images
-      if (type === 'image' && buffer.length < 500000) {
-        const base64 = `data:${file.type || 'image/jpeg'};base64,${buffer.toString('base64')}`;
+      // Fallback: Return base64 for any image under 2MB
+      if (type === 'image' && buffer.length < 2000000) {
+        const base64 = `data:${contentType};base64,${buffer.toString('base64')}`;
+        console.log('Using base64 fallback, size:', base64.length);
         return NextResponse.json({ url: base64, fallback: true });
       }
       
       return NextResponse.json({ 
-        error: 'Failed to upload file',
-        details: errorText
+        error: 'Upload failed. Try a smaller image (under 2MB)',
+        details: `Error: ${response.status}`
       }, { status: 500 });
     }
 
