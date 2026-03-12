@@ -9,10 +9,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "AmbroseOvienlonbaTV - Christian Broadcasting",
-  description: "AmbroseOvienlonbaTV - Christian Broadcasting Network. Watch sermons, gospel music, live events, and more.",
+  title: "ORACLETV - Christian Broadcasting",
+  description: "ORACLETV - Christian Broadcasting Network. Watch sermons, gospel music, live events, and more.",
   keywords: ["Christian TV", "Gospel", "Sermons", "Christian Broadcasting", "Religious Content"],
-  authors: [{ name: "AmbroseOvienlonbaTV" }],
+  authors: [{ name: "ORACLETV" }],
 };
 
 export default function RootLayout({
