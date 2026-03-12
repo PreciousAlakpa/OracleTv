@@ -1053,6 +1053,9 @@ function AdminPanel({
   const [scheduleForm, setScheduleForm] = useState({ title: '', day: 'Monday', time: '09:00', description: '' });
   const [editingVideo, setEditingVideo] = useState<Video | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const slideImageRef = useRef<HTMLInputElement>(null);
+  const thumbnailRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
   const getYouTubeThumbnail = (url: string): string | null => {
     if (!url) return null;
@@ -1069,6 +1072,57 @@ function AdminPanel({
     const file = e.target.files?.[0];
     if (!file) return;
     alert('Video selected: ' + file.name + '. Upload to YouTube and paste the URL for best results, or use the video URL field.');
+  };
+
+  // Upload image to Supabase storage
+  const uploadImage = async (file: File): Promise<string | null> => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'image');
+      
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await res.json();
+      setUploading(false);
+      
+      if (data.url) {
+        return data.url;
+      } else {
+        alert('Upload failed: ' + (data.error || 'Unknown error'));
+        return null;
+      }
+    } catch (error) {
+      setUploading(false);
+      alert('Upload failed');
+      return null;
+    }
+  };
+
+  // Handle slide image upload
+  const handleSlideImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const url = await uploadImage(file);
+    if (url) {
+      setSlideForm(prev => ({ ...prev, image_url: url }));
+    }
+  };
+
+  // Handle thumbnail upload
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const url = await uploadImage(file);
+    if (url) {
+      setForm(prev => ({ ...prev, thumbnail_url: url }));
+    }
   };
 
   const addVideo = async () => {
@@ -1224,12 +1278,30 @@ function AdminPanel({
               {form.thumbnail_url && (
                 <img src={form.thumbnail_url} alt="Thumbnail" className="w-48 h-28 object-cover rounded-lg border border-gray-200" />
               )}
-              <input 
-                placeholder="Thumbnail URL" 
-                value={form.thumbnail_url} 
-                onChange={e => setForm({...form, thumbnail_url: e.target.value})} 
-                className="w-full p-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none" 
-              />
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input 
+                    placeholder="Thumbnail URL" 
+                    value={form.thumbnail_url} 
+                    onChange={e => setForm({...form, thumbnail_url: e.target.value})} 
+                    className="flex-1 p-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none" 
+                  />
+                  <input 
+                    type="file" 
+                    ref={thumbnailRef}
+                    accept="image/*"
+                    onChange={handleThumbnailUpload}
+                    className="hidden" 
+                  />
+                  <button 
+                    onClick={() => thumbnailRef.current?.click()}
+                    disabled={uploading}
+                    className="px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold whitespace-nowrap disabled:opacity-50 text-white"
+                  >
+                    {uploading ? 'Uploading...' : 'Upload'}
+                  </button>
+                </div>
+              </div>
               <input 
                 placeholder="Duration (e.g., 1:30:00)" 
                 value={form.duration} 
@@ -1293,12 +1365,33 @@ function AdminPanel({
                   onChange={e => setSlideForm({...slideForm, title: e.target.value})} 
                   className="w-full p-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none" 
                 />
-                <input 
-                  placeholder="Image URL *" 
-                  value={slideForm.image_url} 
-                  onChange={e => setSlideForm({...slideForm, image_url: e.target.value})} 
-                  className="w-full p-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none" 
-                />
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input 
+                      placeholder="Image URL *" 
+                      value={slideForm.image_url} 
+                      onChange={e => setSlideForm({...slideForm, image_url: e.target.value})} 
+                      className="flex-1 p-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none" 
+                    />
+                    <input 
+                      type="file" 
+                      ref={slideImageRef}
+                      accept="image/*"
+                      onChange={handleSlideImageUpload}
+                      className="hidden" 
+                    />
+                    <button 
+                      onClick={() => slideImageRef.current?.click()}
+                      disabled={uploading}
+                      className="px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold whitespace-nowrap disabled:opacity-50 text-white"
+                    >
+                      {uploading ? 'Uploading...' : 'Upload Image'}
+                    </button>
+                  </div>
+                  {slideForm.image_url && (
+                    <img src={slideForm.image_url} alt="Preview" className="w-full h-48 object-cover rounded-lg border border-gray-200" />
+                  )}
+                </div>
                 <button onClick={addSlide} className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition-colors text-white">
                   Add Slide
                 </button>
