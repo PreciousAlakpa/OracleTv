@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+	 viewBox="0 0 300 80" xml:space="preserve">
+  
+  <!-- Trumpet Icon on the left -->
+  <g transform="translate(10, 15)" fill="white">
+    <!-- Trumpet bell -->
+    <ellipse cx="8" cy="25" rx="10" ry="16" fill="white" opacity="0.95"/>
+    <ellipse cx="8" cy="25" rx="6" ry="12" fill="none" stroke="white" stroke-width="1"/>
+    
+    <!-- Trumpet body -->
+    <rect x="12" y="22" width="28" height="5" fill="white" rx="1"/>
+    
+    <!-- Trumpet valves -->
+    <rect x="20" y="12" width="4" height="12" fill="white" rx="1"/>
+    <rect x="27" y="10" width="4" height="14" fill="white" rx="1"/>
+    <rect x="34" y="12" width="4" height="12" fill="white" rx="1"/>
+    
+    <!-- Mouthpiece -->
+    <rect x="40" y="23" width="10" height="3" fill="white" rx="1"/>
+  </g>
+
+  <!-- Main Text: TRUMPETER -->
+  <text x="170" y="40" text-anchor="middle" font-family="Georgia, serif" font-size="28" font-weight="bold" letter-spacing="3" fill="white">
+    TRUMPETER
+  </text>
+
+  <!-- TV text -->
+  <text x="170" y="68" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="bold" letter-spacing="10" fill="white">
+    T V
+  </text>
+
+</svg>
