@@ -54,7 +54,7 @@ const sampleVideos: Video[] = [
 ];
 
 const sampleSlides: Slide[] = [
-  { id: '1', title: 'Welcome to AmbroseOvienlonbaTV', image_url: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=1920' } as Slide,
+  { id: '1', title: 'Welcome to ORACLETV', image_url: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=1920' } as Slide,
   { id: '2', title: 'Live Sunday Service', image_url: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=1920' } as Slide,
   { id: '3', title: 'Gospel Music Night', image_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1920' } as Slide,
 ];
@@ -236,12 +236,12 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
         
         <nav className="absolute top-0 left-0 right-0 z-20 px-6 md:px-12 py-6 flex justify-between items-center">
-          <h1 className="text-xl md:text-2xl font-black text-white">AmbroseOvienlonba<span className="text-blue-500">TV</span></h1>
+          <h1 className="text-xl md:text-2xl font-black text-white">ORACLE<span className="text-blue-500">TV</span></h1>
           <button onClick={() => navigateTo('admin')} className="text-white/90 hover:text-white text-sm px-4 py-2 rounded-full bg-black/20 backdrop-blur-sm">Admin</button>
         </nav>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-3 text-center italic">AmbroseOvienlonba<span className="text-blue-400">TV</span></h1>
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-3 text-center italic">ORACLE<span className="text-blue-400">TV</span></h1>
           <p className="text-white/90 text-base md:text-lg mb-10">24/7 Christian Broadcasting Network</p>
           
           <button 
@@ -290,7 +290,7 @@ export default function HomePage() {
       <aside className={`fixed top-0 left-0 h-full w-72 bg-white z-[70] transform transition-transform duration-300 shadow-2xl ${showSideMenu ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-black text-blue-600">AOTV</h2>
+            <h2 className="text-xl font-black text-blue-600">OTV</h2>
             <button onClick={() => setShowSideMenu(false)} className="p-2 hover:bg-gray-100 rounded-full">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
@@ -339,7 +339,7 @@ export default function HomePage() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
             <button onClick={() => navigateTo('splash')} className="text-lg md:text-xl font-black text-blue-600 hover:opacity-80">
-              AOTV
+              OTV
             </button>
           </div>
           <div className="flex items-center gap-3">
@@ -393,7 +393,7 @@ export default function HomePage() {
                 <span className="text-white/70 text-xs">Featured</span>
               </div>
               <h2 className="text-3xl md:text-5xl font-black text-white mb-3">{slides[0].title}</h2>
-              <p className="text-white/70 text-sm md:text-base mb-6">Experience powerful teachings and worship from AmbroseOvienlonbaTV.</p>
+              <p className="text-white/70 text-sm md:text-base mb-6">Experience powerful teachings and worship from ORACLETV.</p>
               <div className="flex gap-3">
                 <button onClick={() => setShowLiveScreen(true)} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-bold text-sm text-white">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Watch Live
@@ -528,7 +528,7 @@ function LiveScreen({ onBack, videos, onPlayVideo }: { onBack: () => void; video
       {/* TV Logo Watermark - Top Left */}
       <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
         <div className="bg-blue-600 px-3 py-1.5 rounded-lg shadow-lg">
-          <span className="text-white font-black text-sm">AOTV</span>
+          <span className="text-white font-black text-sm">OTV</span>
         </div>
       </div>
 
@@ -590,7 +590,7 @@ function LiveScreen({ onBack, videos, onPlayVideo }: { onBack: () => void; video
             </button>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
               <h2 className="text-2xl font-bold text-white mb-2">{liveVideo.title}</h2>
-              <p className="text-white/70">{liveVideo.description || 'Live broadcast from AmbroseOvienlonbaTV'}</p>
+              <p className="text-white/70">{liveVideo.description || 'Live broadcast from ORACLETV'}</p>
             </div>
           </div>
         ) : (
@@ -649,7 +649,7 @@ function VideoPlayerScreen({
       {/* TV Logo Watermark - Top Left */}
       <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
         <div className="bg-blue-600 px-3 py-1.5 rounded-lg">
-          <span className="text-white font-black text-sm">AOTV</span>
+          <span className="text-white font-black text-sm">OTV</span>
         </div>
       </div>
 
@@ -1148,7 +1148,7 @@ function AdminPanel({
             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             </button>
-            <h2 className="text-2xl font-black text-blue-600">AOTV Creator Studio</h2>
+            <h2 className="text-2xl font-black text-blue-600">OTV Creator Studio</h2>
           </div>
           <button onClick={onClose} className="bg-gray-100 px-4 py-2 rounded-full text-sm hover:bg-gray-200">Close</button>
         </div>
@@ -1443,7 +1443,7 @@ function AdminPanel({
               <h3 className="text-lg font-bold text-blue-800 mb-2">📺 TV Mode Features</h3>
               <ul className="text-sm text-blue-700 space-y-1">
                 <li>• Videos play in queue order on all devices</li>
-                <li>• AOTV logo watermark on all videos</li>
+                <li>• OTV logo watermark on all videos</li>
                 <li>• No YouTube redirect - plays in app</li>
                 <li>• Continuous playback without interruption</li>
               </ul>
@@ -1462,7 +1462,7 @@ function AdminPanel({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Network</span>
-                  <span className="text-gray-900">AmbroseOvienlonbaTV</span>
+                  <span className="text-gray-900">ORACLETV</span>
                 </div>
               </div>
             </div>

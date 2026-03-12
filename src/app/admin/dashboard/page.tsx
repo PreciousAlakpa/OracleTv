@@ -148,7 +148,7 @@ export default function AdminDashboard() {
               <span className="text-sm">Back to Site</span>
             </Link>
             <div className="w-px h-6 bg-white/20" />
-            <h1 className="text-xl font-bold"><span className="text-blue-500">AOTV</span> Creator Studio</h1>
+            <h1 className="text-xl font-bold"><span className="text-blue-500">OTV</span> Creator Studio</h1>
           </div>
           <Link href="/" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-semibold">View Site</Link>
         </div>
@@ -437,7 +437,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/50">Network</span>
-                  <span>AmbroseOvienlonbaTV</span>
+                  <span>ORACLETV</span>
                 </div>
               </div>
             </div>
