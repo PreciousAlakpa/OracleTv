@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 interface Video {
@@ -47,6 +47,61 @@ export default function AdminDashboard() {
   const [slideForm, setSlideForm] = useState({ title: '', image_url: '' });
   const [scheduleForm, setScheduleForm] = useState({ title: '', day: 'Monday', time: '09:00', description: '' });
   const [settings, setSettings] = useState({ autoplay: true, darkMode: true });
+  const [uploading, setUploading] = useState(false);
+  
+  const slideFileRef = useRef<HTMLInputElement>(null);
+  const thumbnailFileRef = useRef<HTMLInputElement>(null);
+
+  // Upload image function
+  const uploadImage = async (file: File, type: 'slide' | 'thumbnail' = 'slide'): Promise<string | null> => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', type);
+      
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await res.json();
+      setUploading(false);
+      
+      if (data.url) {
+        return data.url;
+      } else {
+        alert('Upload failed: ' + (data.error || 'Unknown error'));
+        return null;
+      }
+    } catch (error) {
+      setUploading(false);
+      alert('Upload failed');
+      return null;
+    }
+  };
+
+  // Handle slide image upload
+  const handleSlideImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const url = await uploadImage(file, 'slide');
+    if (url) {
+      setSlideForm(prev => ({ ...prev, image_url: url }));
+    }
+  };
+
+  // Handle video thumbnail upload
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const url = await uploadImage(file, 'thumbnail');
+    if (url) {
+      setForm(prev => ({ ...prev, thumbnail_url: url }));
+    }
+  };
 
   // Extract YouTube thumbnail from URL
   const getYouTubeThumbnail = (url: string): string | null => {
@@ -241,12 +296,36 @@ export default function AdminDashboard() {
               {form.youtube_url && getYouTubeThumbnail(form.youtube_url) && (
                 <img src={getYouTubeThumbnail(form.youtube_url) || ''} alt="Thumbnail" className="w-48 h-28 object-cover rounded-lg border border-white/10" />
               )}
-              <input 
-                placeholder="Thumbnail URL" 
-                value={form.thumbnail_url} 
-                onChange={e => setForm({...form, thumbnail_url: e.target.value})} 
-                className="w-full p-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/50 focus:border-blue-500 focus:outline-none" 
-              />
+              
+              {/* Thumbnail URL with Upload Button */}
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input 
+                    placeholder="Thumbnail URL" 
+                    value={form.thumbnail_url} 
+                    onChange={e => setForm({...form, thumbnail_url: e.target.value})} 
+                    className="flex-1 p-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/50 focus:border-blue-500 focus:outline-none" 
+                  />
+                  <input 
+                    type="file" 
+                    ref={thumbnailFileRef}
+                    accept="image/*"
+                    onChange={handleThumbnailUpload}
+                    className="hidden" 
+                  />
+                  <button 
+                    onClick={() => thumbnailFileRef.current?.click()}
+                    disabled={uploading}
+                    className="px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold whitespace-nowrap disabled:opacity-50"
+                  >
+                    {uploading ? 'Uploading...' : 'Upload'}
+                  </button>
+                </div>
+                {form.thumbnail_url && (
+                  <img src={form.thumbnail_url} alt="Thumbnail preview" className="w-48 h-28 object-cover rounded-lg border border-white/10" />
+                )}
+              </div>
+              
               <input 
                 placeholder="Duration (e.g., 1:30:00)" 
                 value={form.duration} 
@@ -287,12 +366,36 @@ export default function AdminDashboard() {
                   onChange={e => setSlideForm({...slideForm, title: e.target.value})} 
                   className="w-full p-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/50 focus:border-blue-500 focus:outline-none" 
                 />
-                <input 
-                  placeholder="Image URL *" 
-                  value={slideForm.image_url} 
-                  onChange={e => setSlideForm({...slideForm, image_url: e.target.value})} 
-                  className="w-full p-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/50 focus:border-blue-500 focus:outline-none" 
-                />
+                
+                {/* Image URL with Upload Button */}
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <input 
+                      placeholder="Image URL *" 
+                      value={slideForm.image_url} 
+                      onChange={e => setSlideForm({...slideForm, image_url: e.target.value})} 
+                      className="flex-1 p-3 rounded-lg bg-white/10 border border-white/10 text-white placeholder-white/50 focus:border-blue-500 focus:outline-none" 
+                    />
+                    <input 
+                      type="file" 
+                      ref={slideFileRef}
+                      accept="image/*"
+                      onChange={handleSlideImageUpload}
+                      className="hidden" 
+                    />
+                    <button 
+                      onClick={() => slideFileRef.current?.click()}
+                      disabled={uploading}
+                      className="px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg text-sm font-semibold whitespace-nowrap disabled:opacity-50"
+                    >
+                      {uploading ? 'Uploading...' : 'Upload Image'}
+                    </button>
+                  </div>
+                  {slideForm.image_url && (
+                    <img src={slideForm.image_url} alt="Preview" className="w-full h-48 object-cover rounded-lg border border-white/10" />
+                  )}
+                </div>
+                
                 <button onClick={addSlide} className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition-colors">
                   Add Slide
                 </button>

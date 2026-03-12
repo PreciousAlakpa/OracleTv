@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to Supabase Storage
     const response = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/aotv-media/${fileName}`,
+      `${SUPABASE_URL}/storage/v1/object/oracletv-media/${fileName}`,
       {
         method: 'POST',
         headers: {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     const result = await response.json();
     
     // Construct public URL
-    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/aotv-media/${fileName}`;
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/oracletv-media/${fileName}`;
 
     return NextResponse.json({ 
       url: publicUrl,
