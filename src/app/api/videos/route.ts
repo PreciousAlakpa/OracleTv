@@ -52,8 +52,11 @@ async function supabaseRequest(table: string, options: {
 
 // GET - Fetch all videos
 export async function GET() {
+  console.log('SUPABASE_URL:', SUPABASE_URL ? 'SET' : 'NOT SET');
+  console.log('SUPABASE_KEY:', SUPABASE_ANON_KEY ? 'SET' : 'NOT SET');
+  
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    return NextResponse.json({ videos: videosStore, message: 'Using local storage' })
+    return NextResponse.json({ videos: videosStore, message: 'Using local storage - credentials missing' })
   }
 
   try {
@@ -61,9 +64,14 @@ export async function GET() {
       query: '?select=*&order=order_index.asc,created_at.desc'
     })
 
-    if (error || !data) {
+    if (error) {
       console.error('GET videos error:', error)
-      return NextResponse.json({ videos: videosStore })
+      return NextResponse.json({ videos: [], error })
+    }
+
+    if (!data) {
+      console.error('GET videos: No data returned')
+      return NextResponse.json({ videos: [] })
     }
 
     // Map to frontend format
@@ -86,7 +94,7 @@ export async function GET() {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     console.error('Error fetching videos:', error)
-    return NextResponse.json({ videos: videosStore, error: errorMessage }, { status: 500 })
+    return NextResponse.json({ videos: [], error: errorMessage }, { status: 500 })
   }
 }
 
